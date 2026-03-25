@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantalla — Millón de Fugas</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body { overflow:hidden; }
+    .fullscreen { width:100vw; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px; }
+
+    /* Waiting */
+    #waiting-screen { text-align:center; flex-direction:column; }
+    #waiting-screen h1 { font-size:clamp(2rem,5vw,4rem); font-weight:900; text-transform:uppercase; letter-spacing:-1px; margin:24px 0 8px; }
+    #waiting-screen .subtitle { font-size:clamp(0.8rem,1.5vw,1.2rem); opacity:0.5; text-transform:uppercase; letter-spacing:4px; }
+    .info-card { display:inline-flex; align-items:center; gap:48px; padding:32px 48px; margin-top:32px; }
+    .stat-label { font-size:10px; opacity:0.4; text-transform:uppercase; letter-spacing:2px; margin-bottom:4px; }
+    .stat-value { font-size:clamp(2rem,4vw,3.5rem); font-weight:900; color:var(--gold); }
+    #waiting-players { margin-top:24px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; max-width:800px; }
+
+    /* Question */
+    #question-screen { flex-direction:column; gap:20px; }
+    .q-header { width:100%; display:flex; justify-content:space-between; align-items:center; }
+    #q-label { color:var(--gold); font-weight:800; text-transform:uppercase; letter-spacing:3px; font-size:clamp(0.7rem,1.5vw,1rem); }
+    #main-question { font-size:clamp(1.2rem,3vw,2.2rem); font-weight:800; padding:clamp(16px,3vw,28px) clamp(24px,5vw,60px); }
+    .options-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:1000px; }
+    .jokers-bar { display:flex; gap:12px; }
+    .side-panels { display:flex; gap:20px; width:100%; max-width:1000px; justify-content:center; }
+    #poll-box, #call-box { flex:1; max-width:380px; }
+
+    /* Sound wave */
+    #sound-wave { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:10px; }
+    #sound-wave .wave-label { font-size:11px; font-weight:700; color:var(--cyan); opacity:0.7; text-transform:uppercase; letter-spacing:2px; }
+
+    /* Ranking */
+    #ranking-screen { flex-direction:column; }
+    #ranking-screen h2 { font-size:clamp(2rem,5vw,4rem); font-weight:900; color:var(--gold); text-transform:uppercase; margin-bottom:32px; letter-spacing:-1px; }
+    #ranking-list { width:100%; max-width:700px; }
+
+    /* Audio gate */
+    #audio-gate { position:fixed; top:24px; right:24px; z-index:100; }
+  </style>
+</head>
+<body>
+
+<!-- Audio unlock -->
+<div id="audio-gate">
+  <button class="btn-action" onclick="enableAudio()">🔊 ACTIVAR SONIDO</button>
+</div>
+
+<!-- ESPERA -->
+<div id="waiting-screen" class="fullscreen" style="display:flex">
+  <div class="game-logo large">
+    <span class="top-text">Quién quiere detectar</span>
+    <span class="mid-text">UN MILLÓN</span>
+    <span class="bot-text">de fugas</span>
+    <div class="icon">💧</div>
+  </div>
+  <h1>EL CONCURSO VA A COMENZAR</h1>
+  <p class="subtitle">Prepárate para detectar fugas</p>
+
+  <div class="glass-card info-card">
+    <div>
+      <div class="stat-label">Estado</div>
+      <div id="conn-status-text" style="font-size:1.3rem;font-weight:700;color:var(--green)">CONEXIÓN ESTABLE</div>
+    </div>
+    <div style="width:1px;height:60px;background:rgba(255,255,255,0.1)"></div>
+    <div>
+      <div class="stat-label">Concursantes</div>
+      <div id="player-count" class="stat-value">0</div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;display:flex;align-items:center;gap:10px;opacity:0.6">
+    <div style="width:10px;height:10px;border-radius:50%;background:var(--cyan);animation:pulse-dot 2s infinite"></div>
+    <span style="font-size:13px;text-transform:uppercase;letter-spacing:3px">Esperando la primera pregunta</span>
+  </div>
+
+  <div id="waiting-players"></div>
+</div>
+
+<!-- PREGUNTA -->
+<div id="question-screen" class="fullscreen" style="display:none">
+
+  <div class="q-header" style="max-width:1000px;width:100%">
+    <span id="q-label">PREGUNTA 1</span>
+    <div class="jokers-bar">
+      <span id="joker-badge-50"      class="joker-badge hidden">✂️ 50%</span>
+      <span id="joker-badge-publico" class="joker-badge hidden">👥 Público</span>
+      <span id="joker-badge-llamada" class="joker-badge hidden">📞 Llamada</span>
+    </div>
+    <div class="timer-ring big">
+      <svg width="130" height="130">
+        <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="9"/>
+        <circle id="main-timer-progress" cx="65" cy="65" r="54" fill="none" stroke="var(--gold)"
+                stroke-width="9" stroke-dasharray="339.29" stroke-dashoffset="0" stroke-linecap="round"/>
+      </svg>
+      <span id="main-timer-text"></span>
+    </div>
+  </div>
+
+  <div class="q-box" style="max-width:1000px;width:100%">
+    <h2 id="main-question" style="line-height:1.4">Cargando pregunta...</h2>
+  </div>
+
+  <div class="options-grid">
+    <div class="option-btn big" id="opt-A">
+      <span class="letter" style="min-width:52px;height:52px">A</span>
+      <span class="label">---</span>
+    </div>
+    <div class="option-btn big" id="opt-B">
+      <span class="letter" style="min-width:52px;height:52px">B</span>
+      <span class="label">---</span>
+    </div>
+    <div class="option-btn big" id="opt-C">
+      <span class="letter" style="min-width:52px;height:52px">C</span>
+      <span class="label">---</span>
+    </div>
+    <div class="option-btn big" id="opt-D">
+      <span class="letter" style="min-width:52px;height:52px">D</span>
+      <span class="label">---</span>
+    </div>
+  </div>
+
+  <div class="side-panels">
+    <!-- Poll -->
+    <div id="poll-box" class="glass-card hidden" style="padding:20px">
+      <h3 style="font-size:11px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:2px;text-align:center;margin-bottom:16px">👥 Votación del Público</h3>
+      <div style="display:flex;align-items:flex-end;gap:12px;height:160px;justify-content:center">
+        <div class="poll-bar-wrap">
+          <div class="poll-bar-track"><div id="screen-poll-fill-A" class="poll-bar-fill" style="height:0%"></div></div>
+          <span style="font-weight:700">A</span><span id="screen-poll-lbl-A" style="font-size:10px;opacity:0.5">0%</span>
+        </div>
+        <div class="poll-bar-wrap">
+          <div class="poll-bar-track"><div id="screen-poll-fill-B" class="poll-bar-fill" style="height:0%"></div></div>
+          <span style="font-weight:700">B</span><span id="screen-poll-lbl-B" style="font-size:10px;opacity:0.5">0%</span>
+        </div>
+        <div class="poll-bar-wrap">
+          <div class="poll-bar-track"><div id="screen-poll-fill-C" class="poll-bar-fill" style="height:0%"></div></div>
+          <span style="font-weight:700">C</span><span id="screen-poll-lbl-C" style="font-size:10px;opacity:0.5">0%</span>
+        </div>
+        <div class="poll-bar-wrap">
+          <div class="poll-bar-track"><div id="screen-poll-fill-D" class="poll-bar-fill" style="height:0%"></div></div>
+          <span style="font-weight:700">D</span><span id="screen-poll-lbl-D" style="font-size:10px;opacity:0.5">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Call -->
+    <div id="call-box" class="call-timer-box hidden">
+      <div style="font-size:11px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">📞 Tiempo de Llamada</div>
+      <div id="call-timer-text" class="call-timer-num">30</div>
+      <div class="call-timer-bar"><div id="call-timer-fill" class="call-timer-fill" style="width:100%"></div></div>
+    </div>
+  </div>
+
+  <!-- Sound wave indicator -->
+  <div id="sound-wave" class="hidden">
+    <div class="sound-wave"><span></span><span></span><span></span><span></span><span></span></div>
+    <span class="wave-label">Escuchando...</span>
+    <div class="sound-wave"><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<!-- RANKING -->
+<div id="ranking-screen" class="fullscreen" style="display:none">
+  <h2>🏆 Líderes del Concurso</h2>
+  <div id="ranking-list" style="width:100%;max-width:700px"></div>
+</div>
+
+<audio id="audio-player" preload="none"></audio>
+<audio id="bg-audio" loop preload="none" src="sounds/bg_music.mp3"></audio>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/screen.js"></script>
+</body>
+</html>
