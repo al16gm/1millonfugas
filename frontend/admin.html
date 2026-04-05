@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Admin — Un Millón de Fugas</title>
+  <style>
+    :root {
+      --bg:    #020617;
+      --gold:  #D4AF37;
+      --cyan:  #0ea5e9;
+      --green: #10b981;
+      --red:   #ef4444;
+      --card:  rgba(255,255,255,0.03);
+      --border:rgba(212,175,55,0.15);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(14,165,233,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(212,175,55,0.08) 0%, transparent 50%);
+      color: white;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Layout ── */
+    .admin-wrap {
+      display: grid;
+      grid-template-columns: 260px 1fr 260px;
+      grid-template-rows: 48px 1fr;
+      height: 100vh;
+      gap: 0;
+    }
+
+    /* ── Header ── */
+    .admin-header {
+      grid-column: 1 / -1;
+      background: rgba(0,0,0,0.4);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+    }
+
+    .header-logo {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .header-logo span { color: white; opacity: 0.5; }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      animation: blink 1.5s infinite;
+    }
+    .status-dot.error { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+    @keyframes blink {
+      0%,100% { opacity:1; }
+      50%      { opacity:0.3; }
+    }
+
+    #current-q-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    #admin-timer {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--cyan);
+      min-width: 40px;
+      text-align: center;
+    }
+
+    /* ── Sidebar izquierda ── */
+    .sidebar-left {
+      background: rgba(0,0,0,0.25);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Centro ── */
+    .center-panel {
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Sidebar derecha ── */
+    .sidebar-right {
+      background: rgba(0,0,0,0.25);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Secciones ── */
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+
+    .section-label {
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      opacity: 0.7;
+      margin-bottom: 8px;
+    }
+
+    /* ── Botones de control ── */
+    .ctrl-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 7px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: 100%;
+    }
+    .ctrl-btn:hover  { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
+    .ctrl-btn.active { background: rgba(212,175,55,0.2);  border-color: var(--gold); color: var(--gold); }
+    .ctrl-btn.danger { background: rgba(239,68,68,0.1);   border-color: rgba(239,68,68,0.3); color: var(--red); }
+    .ctrl-btn.green  { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: var(--green); }
+    .ctrl-btn.cyan   { background: rgba(14,165,233,0.15); border-color: rgba(14,165,233,0.4); color: var(--cyan); }
+    .ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── Botón CONTINUAR grande ── */
+    .btn-continue-big {
+      background: linear-gradient(135deg, var(--gold) 0%, #AA8A2E 100%);
+      border: none;
+      border-radius: 12px;
+      color: #020617;
+      font-size: 13px;
+      font-weight: 900;
+      padding: 12px;
+      cursor: pointer;
+      width: 100%;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(212,175,55,0.25);
+    }
+    .btn-continue-big:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    /* ── Flujo de estados ── */
+    .flow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+
+    .flow-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.5);
+      font-size: 8px;
+      font-weight: 800;
+      padding: 6px 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .flow-btn:hover  { border-color: rgba(255,255,255,0.2); color: white; }
+    .flow-btn.active { background: rgba(212,175,55,0.15); border-color: var(--gold); color: var(--gold); }
+
+    /* ── Revelar ── */
+    .reveal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .rev-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .rev-btn:hover { background: rgba(212,175,55,0.1); border-color: var(--gold); }
+
+    /* ── Comodines ── */
+    .joker-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 6px;
+    }
+
+    .joker-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: white;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 8px 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .joker-btn .icon { font-size: 16px; }
+    .joker-btn:hover  { background: rgba(14,165,233,0.1); border-color: var(--cyan); }
+    .joker-btn.active { background: rgba(14,165,233,0.2); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 10px rgba(14,165,233,0.2); }
+
+    /* ── Soundboard ── */
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 4px;
+    }
+
+    .sound-btn {
+      background: rgba(14,165,233,0.08);
+      border: 1px solid rgba(14,165,233,0.2);
+      border-radius: 8px;
+      color: var(--cyan);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 7px 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .sound-btn:hover { background: rgba(14,165,233,0.2); }
+    .sound-btn:active { transform: scale(0.95); }
+
+    /* ── Inputs ── */
+    .input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+
+    .input-label {
+      font-size: 8px;
+      font-weight: 800;
+      text-transform: uppercase;
+      opacity: 0.4;
+      letter-spacing: 1px;
+    }
+
+    .ctrl-input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 10px;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .ctrl-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.1);
+    }
+
+    /* ── Preview pregunta ── */
+    #q-preview {
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* ── Lista preguntas ── */
+    #questions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    #questions-list::-webkit-scrollbar { width: 3px; }
+    #questions-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Lista participantes ── */
+    #participants-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    #participants-list::-webkit-scrollbar { width: 3px; }
+    #participants-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Log ── */
+    #admin-log {
+      font-size: 9px;
+      font-family: monospace;
+      max-height: 80px;
+      overflow-y: auto;
+      opacity: 0.7;
+    }
+    #admin-log p { margin-bottom: 2px; }
+    #admin-log::-webkit-scrollbar { width: 2px; }
+    #admin-log::-webkit-scrollbar-thumb { background: var(--border); }
+
+    /* ── Debug ── */
+    #debug-json {
+      font-family: monospace;
+      font-size: 7px;
+      opacity: 0.3;
+      max-height: 40px;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 4px;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+
+    /* ── Scrollbar global ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .admin-wrap {
+        grid-template-columns: 1fr;
+        grid-template-rows: 48px auto auto auto;
+        height: auto;
+      }
+      .sidebar-left, .sidebar-right {
+        border: none;
+        border-top: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-wrap">
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+  <header class="admin-header">
+    <div class="header-logo">M<span>illón</span> · Admin</div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="status-pill">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-label">Conectando...</span>
+      </div>
+      <span id="current-q-label" style="font-size:11px;font-weight:800;color:var(--gold)">Pregunta #1</span>
+    </div>
+    <div id="admin-timer"></div>
+  </header>
+
+  <!-- ══ SIDEBAR IZQUIERDA ═══════════════════════════════════════════════════ -->
+  <aside class="sidebar-left">
+
+    <!-- Flujo principal -->
+    <div class="section">
+      <div class="section-label">Flujo de Juego</div>
+      <div class="flow-grid" style="margin-bottom:8px">
+        <button class="flow-btn" id="flow-ESPERA"   onclick="goTo('ESPERA')">01 ESPERA</button>
+        <button class="flow-btn" id="flow-PREGUNTA" onclick="goTo('PREGUNTA')">02 PREGUNTA</button>
+        <button class="flow-btn" id="flow-OPCIONES" onclick="goTo('OPCIONES')">03 OPCIONES</button>
+        <button class="flow-btn" id="flow-ACTIVA"   onclick="goTo('ACTIVA')">▶ ACTIVAR</button>
+        <button class="flow-btn" id="flow-CERRADA"  onclick="goTo('CERRADA')">04 CERRAR</button>
+        <button class="flow-btn" id="flow-REVELAR"  onclick="goTo('REVELAR')">05 REVELAR</button>
+        <button class="flow-btn" id="flow-RANKING"  onclick="goTo('RANKING')" style="grid-column:1/-1">06 RANKING</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 3fr;gap:6px">
+        <button class="ctrl-btn" onclick="backFlow()">◀ ATRÁS</button>
+        <button class="ctrl-btn active btn-continue-big" id="btn-continue" onclick="continueFlow()">CONTINUAR ▶</button>
+      </div>
+    </div>
+
+    <!-- Pregunta & Tiempo -->
+    <div class="section">
+      <div class="section-label">Pregunta & Tiempo</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="input-row">
+          <span class="input-label">ID Pregunta</span>
+          <input type="number" id="q-id-input" class="ctrl-input" value="1" min="1">
+        </div>
+        <div class="input-row">
+          <span class="input-label">Tiempo (ms)</span>
+          <input type="number" id="time-input" class="ctrl-input" value="10000" step="1000">
+        </div>
+      </div>
+      <button class="ctrl-btn cyan" onclick="changeQuestion()">⚡ IR A PREGUNTA</button>
+    </div>
+
+    <!-- Revelar Respuesta -->
+    <div class="section">
+      <div class="section-label">Revelar Respuesta</div>
+      <div class="reveal-grid">
+        <button class="rev-btn" id="rev-A" onclick="selectReveal('A')">A</button>
+        <button class="rev-btn" id="rev-B" onclick="selectReveal('B')">B</button>
+        <button class="rev-btn" id="rev-C" onclick="selectReveal('C')">C</button>
+        <button class="rev-btn" id="rev-D" onclick="selectReveal('D')">D</button>
+      </div>
+      <button class="ctrl-btn green" id="btn-reveal-confirm" onclick="confirmReveal()" disabled>
+        ✓ CONFIRMAR Y REVELAR
+      </button>
+    </div>
+
+    <!-- Comodines -->
+    <div class="section">
+      <div class="section-label">Comodines</div>
+      <div class="joker-grid">
+        <button class="joker-btn" id="joker-50"      onclick="toggleJoker('50')">
+          <span class="icon">✂️</span>50%
+        </button>
+        <button class="joker-btn" id="joker-publico" onclick="toggleJoker('publico')">
+          <span class="icon">👥</span>Público
+        </button>
+        <button class="joker-btn" id="joker-llamada" onclick="toggleJoker('llamada')">
+          <span class="icon">📞</span>Llamada
+        </button>
+      </div>
+    </div>
+
+    <!-- Música -->
+    <div class="section">
+      <div class="section-label">Música y Sonido</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+        <button class="ctrl-btn" id="music-on"  onclick="setMusic(true)">▶ MÚSICA ON</button>
+        <button class="ctrl-btn" id="music-off" onclick="setMusic(false)">⏹ MÚSICA OFF</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button class="ctrl-btn cyan" onclick="triggerSound('inicio')">▶ INICIO</button>
+        <button class="ctrl-btn cyan" onclick="triggerSound('final')">⏹ FINAL</button>
+      </div>
+    </div>
+
+    <!-- Soundboard -->
+    <div class="section">
+      <div class="section-label">Soundboard Manual</div>
+      <div class="sound-grid" style="margin-bottom:6px">
+        <button class="sound-btn" onclick="playManualSound(1)">S1</button>
+        <button class="sound-btn" onclick="playManualSound(2)">S2</button>
+        <button class="sound-btn" onclick="playManualSound(3)">S3</button>
+        <button class="sound-btn" onclick="playManualSound(4)">S4</button>
+        <button class="sound-btn" onclick="playManualSound(5)">S5</button>
+        <button class="sound-btn" onclick="playManualSound(6)">S6</button>
+        <button class="sound-btn" onclick="playManualSound(7)">S7</button>
+        <button class="sound-btn" onclick="playManualSound(8)">S8</button>
+      </div>
+      <button class="ctrl-btn danger" onclick="stopManualSound()">⏹ PARAR SONIDO</button>
+    </div>
+
+  </aside>
+
+  <!-- ══ CENTRO ══════════════════════════════════════════════════════════════ -->
+  <main class="center-panel">
+
+    <!-- Vista previa pregunta -->
+    <div class="section">
+      <div class="section-label">Vista Previa de la Pregunta Actual</div>
+      <div id="q-preview">
+        <p style="opacity:0.3;font-style:italic;font-size:11px">Cargando...</p>
+      </div>
+    </div>
+
+    <!-- Lista de preguntas -->
+    <div class="section" style="flex:1">
+      <div class="section-label">Preguntas (clic para ir)</div>
+      <div id="questions-list">
+        <p style="opacity:0.3;font-size:10px;text-align:center;padding:12px">Cargando...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══ SIDEBAR DERECHA ═════════════════════════════════════════════════════ -->
+  <aside class="sidebar-right">
+
+    <!-- Participantes -->
+    <div class="section">
+      <div class="section-label">
+        Participantes
+        (<span id="participant-count">0</span>)
+      </div>
+      <div id="participants-list">
+        <p style="opacity:0.3;font-size:10px;text-align:center;padding:12px">Cargando...</p>
+      </div>
+    </div>
+
+    <!-- Utilidades -->
+    <div class="section">
+      <div class="section-label">Utilidades</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+        <button class="ctrl-btn" onclick="startPolling(onStateUpdate,800)">↺ REFRESCAR</button>
+        <button class="ctrl-btn danger" onclick="resetGame()">⚠ RESET</button>
+      </div>
+      <button class="ctrl-btn cyan" style="width:100%;margin-bottom:6px;font-size:9px"
+              onclick="forceRefresh()">⚡ FORZAR REFRESH (LIMPIAR CACHÉ)</button>
+
+      <!-- NUEVO: Calcular Puntos -->
+      <button id="btn-calculate-scores"
+              class="ctrl-btn green"
+              style="width:100%;margin-bottom:8px"
+              onclick="calculateScores()">
+        🏆 CALCULAR PUNTOS
+      </button>
+
+      <div id="admin-log">
+        <p style="opacity:0.3">Sistema listo...</p>
+      </div>
+      <div id="debug-json"></div>
+    </div>
+
+  </aside>
+
+</div><!-- /admin-wrap -->
+
+<!-- ── Scripts ─────────────────────────────────────────────────────────────── -->
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>

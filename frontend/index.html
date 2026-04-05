@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quién quiere detectar UN MILLÓN de fugas 💧</title>
+  <style>
+    :root {
+      --bg-deep: #020617;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --accent-cyan: #0ea5e9;
+      --accent-gold: #D4AF37;
+      --accent-green: #10b981;
+      --glass-border: rgba(212, 175, 55, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      background-image: 
+        radial-gradient(circle at 0% 0%, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+      color: white;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+      padding: 32px;
+      margin: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 48px 0 rgba(212, 175, 55, 0.2);
+      border-color: var(--accent-gold);
+    }
+
+    .game-logo {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, #0ea5e9 0%, #020617 70%);
+      border: 8px solid #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 60px rgba(14, 165, 233, 0.4), inset 0 0 40px rgba(0,0,0,0.8);
+      animation: logo-float 4s ease-in-out infinite;
+      margin-bottom: 48px;
+    }
+
+    @keyframes logo-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .game-logo .top-text {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #D4AF37;
+      letter-spacing: 2px;
+    }
+
+    .game-logo .mid-text {
+      font-size: 38px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+      line-height: 1;
+      margin: 5px 0;
+    }
+
+    .game-logo .bot-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    .game-logo .icon {
+      font-size: 40px;
+      margin-top: 10px;
+      filter: drop-shadow(0 0 10px #0ea5e9);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      text-align: center;
+    }
+
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    .glass-card:hover .card-icon {
+      transform: scale(1.1);
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--accent-gold);
+    }
+
+    .card-desc {
+      font-size: 14px;
+      opacity: 0.6;
+    }
+
+    .config-section {
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+
+    .config-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-gold);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .config-section input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: white;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .config-section input:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-green);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      margin-top: 8px;
+    }
+
+    .mute-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.2);
+      border: 2px solid var(--accent-gold);
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .mute-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .game-logo {
+        width: 220px;
+        height: 220px;
+      }
+
+      .game-logo .mid-text {
+        font-size: 28px;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logo Principal -->
+  <div class="game-logo">
+    <span class="top-text">Quién quiere detectar</span>
+    <span class="mid-text">UN MILLÓN</span>
+    <span class="bot-text">de fugas</span>
+    <div class="icon">💧</div>
+  </div>
+
+  <!-- Configuración del Backend -->
+  <div class="config-section glass-card">
+    <h2>
+      <span style="background: rgba(212,175,55,0.2); padding: 4px 8px; border-radius: 6px; font-size: 12px;">PASO 1</span>
+      Configuración del Backend
+    </h2>
+    <p style="font-size: 14px; opacity: 0.7; margin-bottom: 16px;">
+      Conecta el sistema con tu Google Apps Script para empezar el juego.
+    </p>
+    <input 
+      type="text" 
+      id="script-url-input"
+      placeholder="https://script.google.com/macros/s/.../exec"
+    />
+    <div class="status-badge">
+      ✓ SISTEMA LISTO
+    </div>
+  </div>
+
+  <!-- Tarjetas de Navegación -->
+  <div class="cards-grid">
+    <a href="player.html" target="_blank" class="card-link">
+      <div class="glass-card">
+        <div class="card-icon">📱</div>
+        <h3 class="card-title">Jugador</h3>
+        <p class="card-desc">Pantalla de concursante</p>
+      </div>
+    </a>
+
+    <a href="screen.html" target="_blank" class="card-link">
+      <div class="glass-card">
+        <div class="card-icon">📺</div>
+        <h3 class="card-title">Pantalla</h3>
+        <p class="card-desc">Proyector / TV principal</p>
+      </div>
+    </a>
+
+    <a href="admin.html" target="_blank" class="card-link">
+      <div class="glass-card">
+        <div class="card-icon">⚙️</div>
+        <h3 class="card-title">Admin</h3>
+        <p class="card-desc">Control del moderador</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- Botón de Audio -->
+  <button id="mute-btn" class="mute-btn" onclick="toggleMute()">🔊</button>
+
+  <!-- Audio de Fondo -->
+  <audio id="bg-audio" loop></audio>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script>
+    // Cargar URL guardada
+    const input = document.getElementById('script-url-input');
+    const savedUrl = localStorage.getItem('millon_script_url');
+    if (savedUrl) input.value = savedUrl;
+
+    // Guardar URL al cambiar
+    input.addEventListener('input', function() {
+      const url = input.value.trim();
+      if (url) {
+        localStorage.setItem('millon_script_url', url);
+      }
+    });
+
+    // Control de audio
+    let audioEnabled = localStorage.getItem('millon_index_audio') !== 'false';
+    const bgAudio = document.getElementById('bg-audio');
+    const muteBtn = document.getElementById('mute-btn');
+
+    bgAudio.src = 'sounds/Intro.mp3';
+    bgAudio.volume = 0.3;
+
+    function updateMuteBtn() {
+      muteBtn.textContent = audioEnabled ? '🔊' : '🔇';
+      muteBtn.style.opacity = audioEnabled ? '1' : '0.5';
+    }
+
+    function toggleMute() {
+      audioEnabled = !audioEnabled;
+      localStorage.setItem('millon_index_audio', audioEnabled);
+      updateMuteBtn();
+      
+      if (audioEnabled) {
+        bgAudio.play().catch(e => console.log('Audio bloqueado:', e));
+      } else {
+        bgAudio.pause();
+      }
+    }
+
+    updateMuteBtn();
+    
+    // Auto-play al cargar (si está habilitado)
+    if (audioEnabled) {
+      bgAudio.play().catch(e => console.log('Audio bloqueado por navegador'));
+    }
+  </script>
+
+</body>
+</html>
