@@ -13,12 +13,13 @@
       --red:   #ef4444;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
-    
+
     body {
-      background: var(--bg);
-      background-image: 
-        radial-gradient(circle at 0% 0%, rgba(14,165,233,0.12) 0%, transparent 50%),
-        radial-gradient(circle at 100% 100%, rgba(212,175,55,0.08) 0%, transparent 50%);
+      background-color: #071428;
+      background-image: url('img/bg_20.png');
+      background-size: cover;
+      background-position: center right;
+      background-attachment: fixed;
       color: white;
       font-family: 'Inter', -apple-system, sans-serif;
       min-height: 100vh;
@@ -26,7 +27,32 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* Overlay oscuro sobre la imagen de fondo */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(2,6,23,0.85) 0%, rgba(7,20,40,0.75) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Todo el contenido por encima del overlay */
+    #login-screen, #game-screen { position: relative; z-index: 1; }
+
     .hidden { display: none !important; }
+
+    /* ── HEADER LOGO ── */
+    .top-logo {
+      text-align: center;
+      padding: 20px 0 0;
+    }
+    .top-logo img {
+      height: 36px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.9;
+    }
 
     /* ── LOGIN SCREEN ── */
     #login-screen {
@@ -41,16 +67,47 @@
     .game-logo {
       width: 200px;
       height: 200px;
-      background: radial-gradient(circle, #0ea5e9 0%, #020617 70%);
-      border: 6px solid var(--gold);
+      background: radial-gradient(circle, rgba(14,165,233,0.6) 0%, rgba(2,6,23,0.9) 70%);
+      border: 5px solid var(--gold);
       border-radius: 50%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 40px rgba(14,165,233,0.3);
-      margin-bottom: 32px;
+      box-shadow: 0 0 50px rgba(14,165,233,0.35), 0 0 100px rgba(14,165,233,0.1);
+      margin-bottom: 28px;
       animation: float 3s ease-in-out infinite;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    .game-logo img {
+      width: 80%;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+
+    .game-logo .top-text {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--gold);
+      letter-spacing: 1px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .game-logo .mid-text {
+      font-size: 22px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+    }
+    .game-logo .bot-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      margin-bottom: 8px;
     }
 
     @keyframes float {
@@ -58,91 +115,56 @@
       50% { transform: translateY(-8px); }
     }
 
-    .game-logo .top-text {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--gold);
-      letter-spacing: 1.5px;
-    }
-
-    .game-logo .mid-text {
-      font-size: 28px;
-      font-weight: 900;
-      color: white;
-      text-shadow: 0 0 8px rgba(255,255,255,0.4);
-      line-height: 1;
-      margin: 4px 0;
-    }
-
-    .game-logo .bot-text {
-      font-size: 14px;
-      font-weight: 700;
-      color: white;
-      text-transform: uppercase;
-    }
-
-    .game-logo .icon {
-      font-size: 32px;
-      margin-top: 8px;
-      filter: drop-shadow(0 0 8px #0ea5e9);
-    }
-
     .login-card {
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(212,175,55,0.2);
+      background: rgba(2,6,23,0.75);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(212,175,55,0.25);
       border-radius: 20px;
       padding: 32px 24px;
       width: 100%;
       max-width: 400px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
     }
 
     .login-card h2 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       color: var(--gold);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       text-align: center;
     }
 
     .login-card p {
-      font-size: 14px;
-      opacity: 0.6;
+      font-size: 13px;
+      opacity: 0.55;
       text-align: center;
       margin-bottom: 24px;
     }
 
-    .input-group {
-      margin-bottom: 16px;
-    }
-
+    .input-group { margin-bottom: 14px; }
     .input-group label {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       opacity: 0.5;
       margin-bottom: 6px;
       letter-spacing: 0.5px;
     }
-
     .input-group input {
       width: 100%;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 12px;
       padding: 14px 16px;
       color: white;
       font-size: 16px;
       transition: all 0.3s;
     }
-
     .input-group input:focus {
       outline: none;
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.12);
     }
 
     #login-btn {
@@ -152,7 +174,7 @@
       border-radius: 12px;
       padding: 16px;
       color: #020617;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -160,19 +182,11 @@
       transition: all 0.3s;
       margin-top: 8px;
     }
-
-    #login-btn:hover:not(:disabled) {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
-    }
-
-    #login-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    #login-btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
+    #login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     #login-error {
-      margin-top: 16px;
+      margin-top: 14px;
       padding: 12px;
       background: rgba(239,68,68,0.15);
       border: 1px solid rgba(239,68,68,0.3);
@@ -187,525 +201,258 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      padding: 16px;
+      padding: 12px 16px 20px;
     }
 
     .player-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
-    .player-header .logo-small {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .header-logo img {
+      height: 28px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.85;
     }
 
-    .player-header .controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
+    .controls { display: flex; gap: 8px; align-items: center; }
 
     #player-score {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       color: var(--green);
-      padding: 6px 12px;
+      padding: 5px 12px;
       background: rgba(16,185,129,0.15);
       border: 1px solid rgba(16,185,129,0.3);
       border-radius: 100px;
     }
 
     .icon-btn {
-      width: 40px;
-      height: 40px;
+      width: 36px; height: 36px;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.05);
-      color: white;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s;
+      background: rgba(255,255,255,0.06);
+      color: white; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s;
     }
-
-    .icon-btn:active {
-      transform: scale(0.95);
-    }
+    .icon-btn:active { transform: scale(0.93); }
 
     .glass-card {
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(212,175,55,0.15);
+      background: rgba(2,6,23,0.65);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(212,175,55,0.18);
       border-radius: 20px;
-      padding: 24px;
+      padding: 20px;
       flex: 1;
       display: flex;
       flex-direction: column;
-      transition: all 0.3s;
-    }
-
-    .glass-card.active-q {
-      border-color: var(--gold);
-      box-shadow: 0 0 30px rgba(212,175,55,0.2);
     }
 
     /* ── TIMER ── */
     .timer-ring {
-      position: relative;
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative; width: 90px; height: 90px;
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .timer-ring svg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: rotate(-90deg);
-    }
-
-    .timer-ring circle {
-      fill: none;
-      stroke-width: 6;
-    }
-
-    .timer-ring .timer-bg {
-      stroke: rgba(255,255,255,0.1);
-    }
-
-    .timer-ring .timer-progress {
-      stroke: var(--gold);
-      stroke-dasharray: 282;
-      stroke-dashoffset: 0;
-      transition: stroke-dashoffset 0.1s linear;
-    }
-
-    .timer-ring.low-time .timer-progress {
-      stroke: var(--red);
-      animation: pulse-red 0.5s infinite;
-    }
-
-    @keyframes pulse-red {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    #timer-text {
-      font-size: 32px;
-      font-weight: 900;
-      color: var(--gold);
-      text-shadow: 0 0 10px rgba(212,175,55,0.3);
-    }
+    .timer-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+    .timer-ring circle { fill: none; stroke-width: 6; }
+    .timer-ring .timer-bg { stroke: rgba(255,255,255,0.1); }
+    .timer-ring .timer-progress { stroke: var(--gold); stroke-dasharray: 282; stroke-dashoffset: 0; transition: stroke-dashoffset 0.1s linear; }
+    .timer-ring.low-time .timer-progress { stroke: var(--red); animation: pulse-red 0.5s infinite; }
+    @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.5} }
+    #timer-text { font-size: 28px; font-weight: 900; color: var(--gold); }
 
     /* ── STATUS ── */
     #game-status {
-      text-align: center;
-      font-size: 16px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--cyan);
-      margin-bottom: 16px;
+      text-align: center; font-size: 13px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1px; color: var(--cyan);
+      margin-bottom: 12px; min-height: 22px;
     }
 
     /* ── QUESTION ── */
     #question-text {
-      font-size: 18px;
-      font-weight: 700;
-      text-align: center;
-      line-height: 1.4;
-      margin-bottom: 24px;
-      min-height: 50px;
+      font-size: 17px; font-weight: 700; text-align: center;
+      line-height: 1.45; margin-bottom: 20px; min-height: 48px;
+      color: white;
     }
 
     /* ── JOKERS ── */
     #jokers-row {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
+      display: flex; justify-content: center; gap: 8px;
+      margin-bottom: 14px; flex-wrap: wrap; min-height: 30px;
     }
-
     .joker-badge {
-      padding: 6px 12px;
+      padding: 5px 12px;
       background: rgba(14,165,233,0.2);
       border: 1px solid rgba(14,165,233,0.4);
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--cyan);
+      border-radius: 100px; font-size: 11px; font-weight: 700; color: var(--cyan);
       animation: zoom-in 0.3s ease;
     }
-
-    @keyframes zoom-in {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    @keyframes zoom-in { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
 
     /* ── OPTIONS ── */
     #options-container {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    #options-container.reveal-staggered .option-btn {
-      animation: slide-in 0.5s ease forwards;
-      opacity: 0;
-    }
-
-    @keyframes slide-in {
-      from { transform: translateX(-50px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
+      display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 14px;
     }
 
     .option-btn {
-      background: rgba(0,0,0,0.6);
-      border: 2px solid rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      transition: all 0.3s;
-      min-height: 60px;
+      background: rgba(0,0,0,0.45);
+      border: 2px solid rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer; transition: all 0.25s; min-height: 54px;
+      color: white; font-family: inherit; width: 100%; text-align: left;
     }
-
-    .option-btn:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .option-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
+    .option-btn:active:not(:disabled) { transform: scale(0.98); }
+    .option-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .option-btn .letter {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 900;
-      flex-shrink: 0;
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(212,175,55,0.2); border: 1px solid rgba(212,175,55,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 900; color: var(--gold); flex-shrink: 0;
     }
-
-    .option-btn .label {
-      flex: 1;
-      font-size: 15px;
-      font-weight: 600;
-      text-align: left;
-    }
-
-    .option-btn:hover:not(:disabled):not(.eliminated) {
-      background: rgba(14,165,233,0.15);
-      border-color: var(--cyan);
-    }
-
-    .option-btn.selected {
-      background: rgba(212,175,55,0.2);
-      border-color: var(--gold);
-      box-shadow: 0 0 20px rgba(212,175,55,0.2);
-    }
-
-    .option-btn.correct {
-      background: rgba(16,185,129,0.3) !important;
-      border-color: var(--green) !important;
-      animation: pulse-green 1.5s infinite;
-    }
-
-    @keyframes pulse-green {
-      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
-      70% { box-shadow: 0 0 0 15px rgba(16,185,129,0); }
-      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
-    }
-
-    .option-btn.incorrect {
-      background: rgba(239,68,68,0.3) !important;
-      border-color: var(--red) !important;
-    }
-
-    .option-btn.eliminated {
-      opacity: 0.3;
-      pointer-events: none;
-    }
+    .option-btn .label { flex: 1; font-size: 15px; font-weight: 600; }
+    .option-btn:hover:not(:disabled):not(.eliminated) { background: rgba(14,165,233,0.15); border-color: var(--cyan); }
+    .option-btn.selected { background: rgba(212,175,55,0.2); border-color: var(--gold); box-shadow: 0 0 16px rgba(212,175,55,0.2); }
+    .option-btn.correct { background: rgba(16,185,129,0.3)!important; border-color: var(--green)!important; animation: pulse-green 1.5s infinite; }
+    @keyframes pulse-green { 0%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)} 70%{box-shadow:0 0 0 14px rgba(16,185,129,0)} 100%{box-shadow:0 0 0 0 rgba(16,185,129,0)} }
+    .option-btn.incorrect { background: rgba(239,68,68,0.3)!important; border-color: var(--red)!important; }
+    .option-btn.eliminated { opacity: 0.25; pointer-events: none; }
 
     /* ── SUBMIT ── */
-    #submit-row {
-      margin-top: auto;
-      padding-top: 16px;
-    }
-
+    #submit-row { margin-top: auto; padding-top: 14px; }
     #submit-btn {
-      width: 100%;
-      background: linear-gradient(135deg, var(--gold), #AA8A2E);
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      color: #020617;
-      font-size: 16px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all 0.3s;
+      width: 100%; background: linear-gradient(135deg, var(--gold), #AA8A2E);
+      border: none; border-radius: 12px; padding: 16px;
+      color: #020617; font-size: 15px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s;
     }
-
-    #submit-btn:active {
-      transform: scale(0.98);
-    }
+    #submit-btn:active { transform: scale(0.98); }
 
     /* ── FEEDBACK ── */
     #feedback-msg {
-      text-align: center;
-      font-size: 16px;
-      font-weight: 800;
-      padding: 16px;
-      border-radius: 12px;
-      margin-top: 16px;
+      text-align: center; font-size: 15px; font-weight: 800;
+      padding: 14px; border-radius: 12px; margin-top: 14px;
       animation: fade-in 0.3s;
     }
-
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .feedback-sent {
-      background: rgba(212,175,55,0.2);
-      border: 1px solid rgba(212,175,55,0.4);
-      color: var(--gold);
-    }
-
-    .feedback-timeout {
-      background: rgba(239,68,68,0.2);
-      border: 1px solid rgba(239,68,68,0.4);
-      color: var(--red);
-    }
+    @keyframes fade-in { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
+    .feedback-sent { background: rgba(212,175,55,0.18); border: 1px solid rgba(212,175,55,0.35); color: var(--gold); }
+    .feedback-timeout { background: rgba(239,68,68,0.18); border: 1px solid rgba(239,68,68,0.35); color: var(--red); }
 
     /* ── POLL ── */
     #poll-container {
-      margin-top: 16px;
-      padding: 16px;
-      background: rgba(14,165,233,0.1);
-      border: 1px solid rgba(14,165,233,0.3);
-      border-radius: 12px;
+      margin-top: 14px; padding: 16px;
+      background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.25); border-radius: 14px;
     }
-
-    #poll-container h3 {
-      font-size: 14px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--cyan);
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .poll-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .poll-bar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .poll-bar-container {
-      width: 100%;
-      height: 60px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 6px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: flex-end;
-    }
-
-    .poll-bar-fill {
-      width: 100%;
-      background: var(--cyan);
-      transition: height 0.5s ease;
-      border-radius: 6px 6px 0 0;
-    }
-
-    .poll-bar-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--cyan);
-    }
-
-    .poll-bar-letter {
-      font-size: 12px;
-      font-weight: 900;
-      opacity: 0.5;
-    }
+    #poll-container h3 { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; text-align: center; }
+    .poll-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .poll-bar { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .poll-bar-container { width: 100%; height: 60px; background: rgba(0,0,0,0.3); border-radius: 6px; display: flex; align-items: flex-end; overflow: hidden; }
+    .poll-bar-fill { width: 100%; background: var(--cyan); transition: height 0.5s ease; border-radius: 6px 6px 0 0; }
+    .poll-bar-label { font-size: 10px; font-weight: 700; color: var(--cyan); }
+    .poll-bar-letter { font-size: 12px; font-weight: 900; opacity: 0.5; }
   </style>
 </head>
 <body>
 
-  <!-- ══════════════════════════════════════════════
-       LOGIN SCREEN
-  ══════════════════════════════════════════════ -->
-  <div id="login-screen">
-    <div class="game-logo">
-      <span class="top-text">Quién quiere detectar</span>
-      <span class="mid-text">UN MILLÓN</span>
-      <span class="bot-text">de fugas</span>
-      <div class="icon">💧</div>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="top-logo"><img src="img/logotipo_Cetaqua.png" alt="Cetaqua"></div>
+
+  <div class="game-logo" style="margin-top:24px">
+    <span class="top-text">Quién quiere detectar</span>
+    <span class="mid-text">UN MILLÓN</span>
+    <span class="bot-text">de fugas</span>
+    <img src="img/logotipo_Cetaqua.png" alt="Cetaqua" style="margin-top:8px;width:70%;filter:brightness(0) invert(1)">
+  </div>
+
+  <div class="login-card">
+    <h2>¡Únete al juego!</h2>
+    <p>Introduce tus datos para participar</p>
+
+    <div class="input-group">
+      <label>Tu nombre</label>
+      <input type="text" id="player-name" placeholder="Ej: Ana García" autocomplete="off">
+    </div>
+    <div class="input-group">
+      <label>Organización (opcional)</label>
+      <input type="text" id="player-org" placeholder="Ej: Cetaqua" autocomplete="off">
     </div>
 
-    <div class="login-card">
-      <h2>¡Únete al juego!</h2>
-      <p>Introduce tus datos para participar</p>
+    <button id="login-btn" onclick="login()">ENTRAR AL JUEGO</button>
+    <div id="login-error" class="hidden"></div>
+  </div>
+</div>
 
-      <div class="input-group">
-        <label>Tu nombre</label>
-        <input type="text" id="player-name" placeholder="Ej: Juan Pérez" autocomplete="off">
-      </div>
+<!-- GAME SCREEN -->
+<div id="game-screen" class="hidden">
 
-      <div class="input-group">
-        <label>Organización (opcional)</label>
-        <input type="text" id="player-org" placeholder="Ej: Cetaqua" autocomplete="off">
-      </div>
-
-      <button id="login-btn" onclick="login()">ENTRAR AL JUEGO</button>
-
-      <div id="login-error" class="hidden"></div>
+  <div class="player-header">
+    <div class="header-logo"><img src="img/logotipo_Cetaqua.png" alt="Cetaqua"></div>
+    <div class="controls">
+      <div id="player-score">0 PTS</div>
+      <button class="icon-btn" onclick="logout()" title="Salir">🚪</button>
+      <button id="mute-btn" class="icon-btn" onclick="toggleMute()" title="Sonido">🔊</button>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════
-       GAME SCREEN
-  ══════════════════════════════════════════════ -->
-  <div id="game-screen" class="hidden">
-    
-    <!-- Header -->
-    <div class="player-header">
-      <div class="logo-small">💧 MILLÓN</div>
-      <div class="controls">
-        <div id="player-score">0 PTS</div>
-        <button class="icon-btn" onclick="logout()" title="Salir">🚪</button>
-        <button id="mute-btn" class="icon-btn" onclick="toggleMute()" title="Sonido">🔊</button>
-      </div>
+  <div class="glass-card">
+    <div class="timer-ring">
+      <svg width="90" height="90">
+        <circle class="timer-bg" cx="45" cy="45" r="40"></circle>
+        <circle id="timer-progress" class="timer-progress" cx="45" cy="45" r="40"
+          style="stroke-dasharray:251;stroke-dashoffset:0"></circle>
+      </svg>
+      <div id="timer-text"></div>
     </div>
 
-    <!-- Main Card -->
-    <div class="glass-card">
-      
-      <!-- Timer -->
-      <div class="timer-ring">
-        <svg width="100" height="100">
-          <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
-          <circle id="timer-progress" class="timer-progress" cx="50" cy="50" r="45"></circle>
-        </svg>
-        <div id="timer-text"></div>
-      </div>
+    <div id="game-status">ESPERANDO INICIO DEL CONCURSO...</div>
+    <div id="question-text"></div>
+    <div id="jokers-row"></div>
 
-      <!-- Status -->
-      <div id="game-status">ESPERANDO INICIO DEL CONCURSO...</div>
-
-      <!-- Question -->
-      <div id="question-text"></div>
-
-      <!-- Jokers -->
-      <div id="jokers-row"></div>
-
-      <!-- Options -->
-      <div id="options-container" class="hidden">
-        <button class="option-btn" id="btn-A" onclick="selectOption('A')">
-          <div class="letter">A</div>
-          <div class="label">---</div>
-        </button>
-        <button class="option-btn" id="btn-B" onclick="selectOption('B')">
-          <div class="letter">B</div>
-          <div class="label">---</div>
-        </button>
-        <button class="option-btn" id="btn-C" onclick="selectOption('C')">
-          <div class="letter">C</div>
-          <div class="label">---</div>
-        </button>
-        <button class="option-btn" id="btn-D" onclick="selectOption('D')">
-          <div class="letter">D</div>
-          <div class="label">---</div>
-        </button>
-      </div>
-
-      <!-- Feedback -->
-      <div id="feedback-msg" class="hidden"></div>
-
-      <!-- Submit -->
-      <div id="submit-row" class="hidden">
-        <button id="submit-btn" onclick="confirmAnswer()">✅ CONFIRMAR RESPUESTA</button>
-      </div>
-
+    <div id="options-container" class="hidden">
+      <button class="option-btn" id="btn-A" onclick="selectOption('A')">
+        <div class="letter">A</div><div class="label">---</div>
+      </button>
+      <button class="option-btn" id="btn-B" onclick="selectOption('B')">
+        <div class="letter">B</div><div class="label">---</div>
+      </button>
+      <button class="option-btn" id="btn-C" onclick="selectOption('C')">
+        <div class="letter">C</div><div class="label">---</div>
+      </button>
+      <button class="option-btn" id="btn-D" onclick="selectOption('D')">
+        <div class="letter">D</div><div class="label">---</div>
+      </button>
     </div>
 
-    <!-- Poll del Público -->
-    <div id="poll-container" class="hidden">
-      <h3>👥 Votación del Público</h3>
-      <div class="poll-grid">
-        <div class="poll-bar">
-          <div class="poll-bar-container">
-            <div id="poll-fill-A" class="poll-bar-fill" style="height:0%"></div>
-          </div>
-          <div class="poll-bar-letter">A</div>
-          <div id="poll-lbl-A" class="poll-bar-label">0%</div>
-        </div>
-        <div class="poll-bar">
-          <div class="poll-bar-container">
-            <div id="poll-fill-B" class="poll-bar-fill" style="height:0%"></div>
-          </div>
-          <div class="poll-bar-letter">B</div>
-          <div id="poll-lbl-B" class="poll-bar-label">0%</div>
-        </div>
-        <div class="poll-bar">
-          <div class="poll-bar-container">
-            <div id="poll-fill-C" class="poll-bar-fill" style="height:0%"></div>
-          </div>
-          <div class="poll-bar-letter">C</div>
-          <div id="poll-lbl-C" class="poll-bar-label">0%</div>
-        </div>
-        <div class="poll-bar">
-          <div class="poll-bar-container">
-            <div id="poll-fill-D" class="poll-bar-fill" style="height:0%"></div>
-          </div>
-          <div class="poll-bar-letter">D</div>
-          <div id="poll-lbl-D" class="poll-bar-label">0%</div>
-        </div>
-      </div>
-    </div>
+    <div id="feedback-msg" class="hidden"></div>
 
+    <div id="submit-row" class="hidden">
+      <button id="submit-btn" onclick="confirmAnswer()">✅ CONFIRMAR RESPUESTA</button>
+    </div>
   </div>
 
-  <!-- ── AUDIO ── -->
-  <audio id="audio-player"></audio>
-  <audio id="bg-audio" loop></audio>
+  <!-- Poll -->
+  <div id="poll-container" class="hidden">
+    <h3>👥 Votación del Público</h3>
+    <div class="poll-grid">
+      <div class="poll-bar"><div class="poll-bar-container"><div id="poll-fill-A" class="poll-bar-fill" style="height:0%"></div></div><div class="poll-bar-letter">A</div><div id="poll-lbl-A" class="poll-bar-label">0%</div></div>
+      <div class="poll-bar"><div class="poll-bar-container"><div id="poll-fill-B" class="poll-bar-fill" style="height:0%"></div></div><div class="poll-bar-letter">B</div><div id="poll-lbl-B" class="poll-bar-label">0%</div></div>
+      <div class="poll-bar"><div class="poll-bar-container"><div id="poll-fill-C" class="poll-bar-fill" style="height:0%"></div></div><div class="poll-bar-letter">C</div><div id="poll-lbl-C" class="poll-bar-label">0%</div></div>
+      <div class="poll-bar"><div class="poll-bar-container"><div id="poll-fill-D" class="poll-bar-fill" style="height:0%"></div></div><div class="poll-bar-letter">D</div><div id="poll-lbl-D" class="poll-bar-label">0%</div></div>
+    </div>
+  </div>
 
-  <!-- ── SCRIPTS ── -->
-  <script src="js/config.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/player.js"></script>
+</div>
 
+<audio id="audio-player"></audio>
+<audio id="bg-audio" loop></audio>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/player.js"></script>
 </body>
 </html>
