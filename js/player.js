@@ -454,6 +454,11 @@ function stopTimer() {
   if (timerInterval)     { clearInterval(timerInterval);     timerInterval     = null; }
   if (timerGraceTimeout) { clearTimeout(timerGraceTimeout);  timerGraceTimeout = null; }
   if (timerGraceInterval){ clearInterval(timerGraceInterval);timerGraceInterval= null; }
+  timerRemaining = 0;
+  var text = document.getElementById('timer-text');
+  var prog = document.getElementById('timer-progress');
+  if (text) text.textContent = '';
+  if (prog) prog.style.strokeDashoffset = 0;
 }
 
 // ── Poll ──────────────────────────────────────────────────────────────────────
